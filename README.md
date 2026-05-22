@@ -6,7 +6,7 @@ En las redes modernas, cada interacción deja un rastro. Ya sea en el nodo centr
 Sin embargo, cuando ocurre un evento anómalo, como un escaneo masivo de puertos para buscar vulnerabilidades o un ataque de denegación de servicio (DDoS), el volumen de estas bitácoras explota, generando millones de registros por minuto. La capacidad de reaccionar ante una amenaza depende directamente de la velocidad con la que se pueda leer, procesar y entender esta avalancha de información.
 
 ### **El Cuello de Botella Secuencial:**
-El análisis tradicional de bitácoras de red se enfrenta a un límite físico ineludible. Si un programa lee un archivo de registro línea por línea desde el principio hasta el final (procesamiento secuencial), el tiempo necesario para encontrar un patrón de ataque crece linealmente con el tamaño del archivo.
+El análisis tradicional de bitácoras de red se enfrenta a un límite físico claro. Si un programa lee un archivo de registro línea por línea desde el principio hasta el final (procesamiento secuencial), el tiempo necesario para encontrar un patrón de ataque crece linealmente con el tamaño del archivo.
 
 Para un archivo de unos pocos megabytes, esto toma fracciones de segundo. Para gigabytes de tráfico de red en tiempo real, el motor de detección se vuelve un cuello de botella. Mientras el sistema sigue leyendo las primeras líneas del registro, el atacante ya ha comprometido la red.
 
@@ -114,3 +114,11 @@ El motor fue desarrollado en C++14. Al compilar y ejecutar el proyecto, el siste
 **3. Validación Lógica:** Se utiliza la macro de diagnóstico assert() para comparar el resultado analítico del motor paralelo contra la firma del atacante inyectado. Si el motor falla en detectarlo, el hilo principal aborta la ejecución inmediatamente, previniendo falsos positivos.
 
 **4. Evidencia de Rendimiento:** Al finalizar exitosamente, el programa imprime un reporte en consola comparando la latencia en milisegundos del análisis secuencial contra el paralelo.
+
+## Referencias
+
+Patterson, D. A., & Hennessy, J. L. (2020). Computer Organization and Design RISC-V Edition
+
+Williams, A. (2019). C++ Concurrency in Action (2nd ed.). Manning Publications.
+
+Bratko, I. (2011). Prolog Programming for Artificial Intelligence (4th ed.). Pearson Education.
