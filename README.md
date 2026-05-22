@@ -55,10 +55,22 @@ El programa en C++ está diseñado para aprovechar todos los núcleos de tu comp
 ## Análisis de Rendimiento y Contraste de Arquitecturas
 ​Para justificar la viabilidad de este motor de defensa, es fundamental entender el impacto del volumen de datos en el tiempo de respuesta y por qué se descartaron otros enfoques de diseño.
 
-​### Complejidad Computacional (El Rendimiento):
-
+### Complejidad Computacional (El Rendimiento):
 ​El rendimiento de un algoritmo se mide por cómo se comporta cuando la cantidad de trabajo aumenta. En el análisis de bitácoras de red:
 
-​- **Enfoque Tradicional (Secuencial):** Su complejidad temporal es de O(N), donde N es el número total de líneas en el registro. Si el archivo duplica su tamaño, el tiempo de procesamiento se duplica. Es una relación rígida y peligrosa bajo ataques de red severos.
+- **Enfoque Tradicional (Secuencial):** Su complejidad temporal es de O(N), donde N es el número total de líneas en el registro. Si el archivo duplica su tamaño, el tiempo de procesamiento se duplica. Es una relación rígida y peligrosa bajo ataques de red severos.
 
-​- **Paralelo:** Al dividir el archivo, la complejidad temporal teórica se reduce a O(N/P), donde P representa el número de núcleos o hilos de procesamiento disponibles. Aunque existe un costo mínimo de tiempo al unir los resultados al final, el tiempo de respuesta del motor se vuelve drásticamente más rápido cuanta más capacidad de hardware se le asigne.
+- **Paralelo:** Al dividir el archivo, la complejidad temporal teórica se reduce a O(N/P), donde P representa el número de núcleos o hilos de procesamiento disponibles. Aunque existe un costo mínimo de tiempo al unir los resultados al final, el tiempo de respuesta del motor se vuelve drásticamente más rápido cuanta más capacidad de hardware se le asigne.
+
+### Contraste de Diseño: Paradigma Paralelo vs. Paradigma Lógico
+​Durante el diseño de la solución, se evaluó modelar el problema utilizando el Paradigma Lógico (específicamente mediante el lenguaje Prolog). Este enfoque funciona como un "libro de reglas" en lugar de una línea de ensamblaje.
+
+​En un modelo lógico, no le decimos a la computadora cómo procesar los datos paso a paso, sino que definimos qué es una anomalía. Por ejemplo, podríamos declarar una regla que diga: *"Si una misma dirección IP intenta conectarse a más de 100 puertos distintos en un minuto, entonces es un escaneo de puertos"*.
+
+**​¿Por qué se descartó para la implementación principal?**
+
+- ​**Ventaja del modelo lógico:** Es extremadamente elegante para definir escenarios de ataque complejos con muy pocas líneas de código.
+
+- **​Desventaja crítica:** Su motor interno busca respuestas haciendo coincidir patrones mediante prueba y error (recursión y backtracking). Si intentamos cargar una bitácora de red de millones de líneas en un sistema lógico, la complejidad espacial (el uso de la memoria RAM) colapsaría, y el tiempo de procesamiento sería inviable para una respuesta en tiempo real.
+
+El paradigma lógico es excelente para sistemas expertos que diagnostican amenazas en un entorno controlado, pero para procesar la fuerza bruta de una avalancha de datos en crudo, el paralelismo de C++ es la herramienta adecuada para el trabajo.
