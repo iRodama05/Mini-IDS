@@ -70,7 +70,47 @@ El programa en C++ está diseñado para aprovechar todos los núcleos de tu comp
 **​¿Por qué se descartó para la implementación principal?**
 
 - ​**Ventaja del modelo lógico:** Es extremadamente elegante para definir escenarios de ataque complejos con muy pocas líneas de código.
-
 - **​Desventaja crítica:** Su motor interno busca respuestas haciendo coincidir patrones mediante prueba y error (recursión y backtracking). Si intentamos cargar una bitácora de red de millones de líneas en un sistema lógico, la complejidad espacial (el uso de la memoria RAM) colapsaría, y el tiempo de procesamiento sería inviable para una respuesta en tiempo real.
 
 El paradigma lógico es excelente para sistemas expertos que diagnostican amenazas en un entorno controlado, pero para procesar la fuerza bruta de una avalancha de datos en crudo, el paralelismo de C++ es la herramienta adecuada para el trabajo.
+
+## Implementación del Paradigma y Modelado Visual
+Para ilustrar la separación de la memoria y la convergencia de los hilos de procesamiento, el siguiente diagrama refleja el flujo de ejecución concurrente implementado en el sistema:
+
+```mermaid
+graph TD
+    A[(Archivo Log: 100,000 líneas)] -->|División de Datos| B(Hilo Principal)
+    
+    B -->|Fork| C[Hilo Trabajador 1]
+    B -->|Fork| D[Hilo Trabajador 2]
+    B -->|Fork| E[Hilo Trabajador 3]
+    B -->|Fork| F[Hilo Trabajador 4]
+
+    C -->|Procesamiento Aislado| G((Memoria Local 1))
+    D -->|Procesamiento Aislado| H((Memoria Local 2))
+    E -->|Procesamiento Aislado| I((Memoria Local 3))
+    F -->|Procesamiento Aislado| J((Memoria Local 4))
+
+    G -->|Mutex lock / Join| K{Fusión de Resultados}
+    H -->|Mutex lock / Join| K
+    I -->|Mutex lock / Join| K
+    J -->|Mutex lock / Join| K
+
+    K --> L[Reporte de Anomalías]
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style K fill:#ff9,stroke:#333,stroke-width:2px
+    style L fill:#bbf,stroke:#333,stroke-width:2px
+```
+## Pruebas Automatizadas y Validación
+El motor fue desarrollado en C++14. Al compilar y ejecutar el proyecto, el sistema realiza automáticamente una validación de integridad (Unit Test) de caja blanca para asegurar la fiabilidad de la detección.
+
+### **Mecánica de la Prueba:**
+
+**1. Generación Sintética:** El programa autogenera un archivo network_log.txt de 100,000 líneas simulando tráfico normal.
+
+**2. Inyección de la Amenaza:** Se inyecta de forma determinista un ataque DDoS originado desde la dirección IP 192.168.1.100.
+
+**3. Validación Lógica:** Se utiliza la macro de diagnóstico assert() para comparar el resultado analítico del motor paralelo contra la firma del atacante inyectado. Si el motor falla en detectarlo, el hilo principal aborta la ejecución inmediatamente, previniendo falsos positivos.
+
+**4. Evidencia de Rendimiento:** Al finalizar exitosamente, el programa imprime un reporte en consola comparando la latencia en milisegundos del análisis secuencial contra el paralelo.
