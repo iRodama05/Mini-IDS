@@ -38,5 +38,27 @@ El sistema recibe bitácoras de tráfico de red en texto plano (archivos `.log`)
 
 - `Target_Port` (Puerto de destino)
 
-2. Cómo Funciona el Trabajo en Paralelo (División y Conquista)
+### 2. Cómo Funciona el Trabajo en Paralelo (División y Conquista)
 El programa en C++ está diseñado para aprovechar todos los núcleos de tu computadora al mismo tiempo, haciendo que trabajen en equipo. Se divide en tres pasos muy sencillos:
+
+**1. Repartición (Dividir):** El programa analiza el tamaño total del archivo de bitácoras y lo corta en pedazos del mismo tamaño. Le asigna un pedazo distinto a cada núcleo de la computadora.
+
+​**2. Análisis Independiente (Procesar):** Cada hilo lee y cuenta las conexiones sospechosas exclusivamente dentro de su propio pedazo. Como cada quien tiene su propia sección del archivo, no se estorban entre ellos y pueden trabajar a su máxima velocidad al mismo tiempo.
+
+​**3. Fusión de Resultados (Unir):** Cuando todos los hilos terminan de leer su parte, deben juntar sus detecciones en un solo reporte final. Para evitar que choquen entre ellos o sobrescriban la información del otro al entregar sus resultados, el programa usa un sistema de turnos automáticos (conocido técnicamente como mutex), garantizando que la suma matemática sea exacta y sin errores.
+
+### ​3. Diagrama Visual de la Solución
+[]imagen
+
+*El diagrama ilustra cómo el archivo original se fragmenta, cómo cada trabajador de la computadora analiza su parte de forma aislada, y cómo al final todos convergen para armar el reporte de resultados de forma ordenada.*
+
+## Análisis de Rendimiento y Contraste de Arquitecturas
+​Para justificar la viabilidad de este motor de defensa, es fundamental entender el impacto del volumen de datos en el tiempo de respuesta y por qué se descartaron otros enfoques de diseño.
+
+​### Complejidad Computacional (El Rendimiento):
+
+​El rendimiento de un algoritmo se mide por cómo se comporta cuando la cantidad de trabajo aumenta. En el análisis de bitácoras de red:
+
+​- **Enfoque Tradicional (Secuencial):** Su complejidad temporal es de O(N), donde N es el número total de líneas en el registro. Si el archivo duplica su tamaño, el tiempo de procesamiento se duplica. Es una relación rígida y peligrosa bajo ataques de red severos.
+
+​- **Paralelo:** Al dividir el archivo, la complejidad temporal teórica se reduce a O(N/P), donde P representa el número de núcleos o hilos de procesamiento disponibles. Aunque existe un costo mínimo de tiempo al unir los resultados al final, el tiempo de respuesta del motor se vuelve drásticamente más rápido cuanta más capacidad de hardware se le asigne.
